@@ -224,7 +224,7 @@ class DataProcHook(GoogleCloudBaseHook):
         return _DataProcJobBuilder(self.project_id, task_id, cluster_name,
                                    job_type, properties)
 
-    def await(self, operation):
+    def wait(self, operation):
         """Awaits for Google Cloud Dataproc Operation to complete."""
         submitted = _DataProcOperation(self.get_conn(), operation)
         submitted.wait_for_done()
