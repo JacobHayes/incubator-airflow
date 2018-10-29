@@ -1536,6 +1536,12 @@ class BigQueryCursor(BigQueryBaseCursor):
         self.buffer = []
         self.all_pages_loaded = False
 
+    def _reset_state(self):
+        self.page_token = None
+        self.job_id = None
+        self.buffer = []
+        self.all_pages_loaded = False
+
     @property
     def description(self):
         """ The schema description method is not currently implemented. """
@@ -1561,6 +1567,7 @@ class BigQueryCursor(BigQueryBaseCursor):
         """
         sql = _bind_parameters(operation,
                                parameters) if parameters else operation
+        self._reset_state()
         self.job_id = self.run_query(sql)
 
     def executemany(self, operation, seq_of_parameters):
@@ -1616,9 +1623,7 @@ class BigQueryCursor(BigQueryBaseCursor):
 
             else:
                 # Reset all state since we've exhausted the results.
-                self.page_token = None
-                self.job_id = None
-                self.page_token = None
+                self._reset_state()
                 return None
 
         return self.buffer.pop(0)
